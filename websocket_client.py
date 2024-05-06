@@ -1,4 +1,5 @@
 import asyncio
+import json
 import websockets
 import websockets.exceptions
 import os
@@ -12,8 +13,8 @@ load_dotenv()
 
 # Demo user (may not work in production)
 class DemoUser(BaseModel):
-    api_key: str = "aa1f2e2070e54928bdf8c11c18fdcee6"
-    api_secret: str = "6a1f3cdf59774234afce4c5ea038e5374df2499572f3470ca453acdaeec54748"
+    api_key: str = "xxx"
+    api_secret: str = "xxx"
 
 
 # Creating a ThreadPoolExecutor for running input in a separate thread
@@ -29,7 +30,12 @@ async def send_messages(websocket):
     while True:
         message = await get_input("")
         try:
-            await websocket.send(message)
+            message_json = {
+                "message": message,
+                "timestamp": None,
+                "target_user_id": None,
+            }
+            await websocket.send(json.dumps(message_json))
             print("Message sent: ", message)
         except websockets.exceptions.ConnectionClosedError:
             print("Server is not available. Exiting...")
